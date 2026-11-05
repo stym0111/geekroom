@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Write it right | Communication Skills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.2/confetti.browser.min.js"></script>
+<style>
+:root{
+  --ink:#1A1633; --pink:#FF7AA8; --yellow:#FFD84D; --mint:#6EE0AE; --sky:#74C0FF; --lilac:#B7A1FF; --orange:#FF9A52; --white:#fff;
+  --shadow:6px 6px 0 var(--ink);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--ink);
+  font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:none}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* slides */
+.slide{position:absolute;inset:0;display:none;background-color:var(--bg,var(--yellow));
+  background-image:radial-gradient(rgba(26,22,51,.13) 1.6px,transparent 1.6px);background-size:24px 24px;overflow:hidden}
+.slide.active{display:block;animation:enter .5s cubic-bezier(.2,.9,.25,1.1)}
+.slide.active.back{animation-name:enterBack}
+@keyframes enter{from{transform:translateX(7%) rotate(1.5deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes enterBack{from{transform:translateX(-7%) rotate(-1.5deg);opacity:0}to{transform:none;opacity:1}}
+.inner{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:30px clamp(16px,5vw,70px) 100px;display:flex;flex-direction:column;z-index:2}
+.c{margin:auto;width:100%;max-width:1150px;display:flex;flex-direction:column;gap:20px}
+
+/* header */
+.hd{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hd h2{font-size:clamp(28px,4.6vw,56px);font-weight:800;letter-spacing:-.025em;line-height:1.02}
+.part{background:var(--ink);color:#fff;border-radius:99px;padding:3px 13px;font-size:14px;font-weight:600}
+.by{font-family:'Caveat',cursive;font-size:23px;font-weight:700;background:#fff;border:2.5px solid var(--ink);border-radius:10px;
+  padding:0 12px;transform:rotate(-3deg);box-shadow:3px 3px 0 var(--ink);margin-left:auto;line-height:1.5}
+.lead{font-size:clamp(17px,1.9vw,22px);max-width:62ch;font-weight:600}
+
+/* building blocks */
+.card{background:#fff;border:3px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:20px}
+.btn{background:#fff;border:3px solid var(--ink);border-radius:99px;padding:8px 20px;font-weight:800;box-shadow:4px 4px 0 var(--ink);
+  transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.on{background:var(--ink);color:#fff}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.split2{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;align-items:start}
+.note{font-family:'Caveat',cursive;font-size:24px;font-weight:700;line-height:1.1}
+.chip{display:inline-block;background:#fff;border:2.5px solid var(--ink);border-radius:99px;padding:3px 13px;font-weight:600;font-size:15px}
+.tip{background:var(--ink);color:#fff;border-radius:16px;padding:12px 16px;font-weight:600}
+small,.sm{font-size:14.5px}
+ul.clean{list-style:none;display:flex;flex-direction:column;gap:8px}
+ul.clean li{padding-left:30px;position:relative}
+ul.clean li::before{content:attr(data-i);position:absolute;left:0;top:-1px}
+.good{background:var(--mint)}.bad{background:var(--pink)}
+
+/* stickers */
+.sticker{position:absolute;z-index:4;font-size:var(--s,56px);line-height:1;cursor:grab;user-select:none;touch-action:none;
+  transform:rotate(var(--r,0deg));
+  filter:drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff) drop-shadow(4px 5px 0 rgba(26,22,51,.3));
+  transition:transform .2s}
+.sticker:hover{transform:rotate(var(--r,0deg)) scale(1.12)}
+.sticker.grab{cursor:grabbing;transition:none;transform:rotate(var(--r,0deg)) scale(1.2)}
+.sticker.wig{animation:wig .6s}
+@keyframes wig{20%{transform:rotate(-18deg) scale(1.2)}40%{transform:rotate(16deg) scale(1.2)}60%{transform:rotate(-10deg)}80%{transform:rotate(8deg)}}
+.floaty{animation:floaty 4.5s ease-in-out infinite}
+@keyframes floaty{50%{translate:0 -12px}}
+
+/* nav */
+#bar{position:fixed;left:0;top:0;height:8px;background:var(--ink);z-index:60;width:0;transition:width .4s}
+#bar::after{content:'';position:absolute;right:-6px;top:-3px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
+#nav{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:8px;
+  background:#fff;border:3px solid var(--ink);border-radius:99px;padding:5px 8px;box-shadow:4px 4px 0 var(--ink)}
+#nav button{width:42px;height:42px;border-radius:50%;font-size:20px;font-weight:800;transition:background .15s}
+#nav button:hover{background:var(--yellow)}
+#nav button:disabled{opacity:.3;cursor:default;background:none}
+#count{min-width:64px;text-align:center;font-weight:800}
+.hint{position:fixed;right:18px;bottom:24px;z-index:60;font-family:'Caveat',cursive;font-size:22px;font-weight:700;color:var(--ink);opacity:.75}
+
+/* title slide */
+.big{font-size:clamp(56px,12vw,170px);font-weight:800;letter-spacing:-.045em;line-height:.9}
+.w{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;transition:transform .25s cubic-bezier(.3,1.8,.5,1);cursor:default}
+.ch:hover{transform:translateY(-.14em) rotate(-8deg)}
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.member{display:block;background:var(--yellow);border:2.5px solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:600;
+  min-width:0;outline:none;cursor:text}
+.member:focus{background:#fff;box-shadow:0 0 0 3px var(--ink)}
+.member:nth-child(2){background:var(--pink)}.member:nth-child(3){background:var(--mint)}
+.member:nth-child(4){background:var(--sky)}.member:nth-child(5){background:var(--lilac)}.member:nth-child(6){background:var(--orange)}
+
+/* roadmap */
+.road{display:block;text-align:left;border:3px solid var(--ink);border-radius:20px;padding:18px;box-shadow:var(--shadow);
+  transition:transform .15s,box-shadow .15s;background:var(--c)}
+.road:hover{transform:translate(-3px,-3px) rotate(-1deg);box-shadow:9px 9px 0 var(--ink)}
+.road .em{font-size:44px;line-height:1;display:block;margin-bottom:6px}
+.road h3{font-size:23px;font-weight:800;line-height:1.1;margin-bottom:4px}
+.road p{font-size:15px;font-weight:600}
+.road .who{margin-top:10px;display:inline-block;background:#fff;border:2px solid var(--ink);border-radius:99px;padding:0 10px;font-size:14px;font-weight:600}
+
+/* flow bubbles */
+.bubble{background:#fff;border:3px solid var(--ink);border-radius:22px 22px 22px 4px;padding:14px 18px;font-weight:600;box-shadow:var(--shadow);min-height:90px}
+
+/* flip cards */
+.flip{perspective:900px;height:176px}
+.fi{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.3,.5,1)}
+.flip.on .fi{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:3px solid var(--ink);border-radius:18px;box-shadow:5px 5px 0 var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px;background:var(--c)}
+.face .em{font-size:40px;line-height:1.1}
+.face b{font-size:22px;font-weight:800}
+.face.back{transform:rotateY(180deg);background:#fff;font-size:14px;font-weight:600;line-height:1.3}
+.face.back b{font-size:16px}
+.tally{background:var(--ink);color:#fff;border:3px solid var(--ink);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px;height:176px}
+.tally b{font-size:44px;line-height:1}
+
+/* formalizer */
+.fzc{font-weight:600;min-height:76px;display:flex;align-items:center;gap:12px;transition:background .3s}
+.fzc .face-e{font-size:34px}
+.fzc.pro{background:#E8FFF4}
+.pop{animation:pop .4s cubic-bezier(.3,1.8,.5,1)}
+@keyframes pop{from{transform:scale(.92);opacity:.4}to{transform:none;opacity:1}}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:15.5px;cursor:pointer;padding:4px 0}
+.chk input{appearance:none;flex:none;width:24px;height:24px;border:3px solid var(--ink);border-radius:8px;background:#fff;margin-top:1px;cursor:pointer;display:grid;place-content:center}
+.chk input:checked{background:var(--mint)}
+.chk input:checked::after{content:'✓';font-weight:800;font-size:16px;line-height:1}
+.chk input:checked + span{text-decoration:line-through;opacity:.55}
+
+/* paper */
+.paper{background:#fff;border:3px solid var(--ink);border-radius:6px;box-shadow:var(--shadow);padding:20px 24px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.5;
+  background-image:linear-gradient(transparent 23px,rgba(116,192,255,.35) 24px);background-size:100% 24px;position:relative}
+.paper h4{font-family:inherit;letter-spacing:.04em;text-align:center;font-size:17px}
+.paper p{margin-bottom:10px}
+.hot{display:block;width:100%;text-align:left;border:2px dashed transparent;border-radius:8px;padding:2px 8px;margin:1px -8px;font:inherit;position:relative;
+  transition:background .15s,border-color .15s}
+.hot:hover,.hot.on{background:var(--yellow);border-color:var(--ink)}
+.hot.on::after{content:'👈';position:absolute;right:6px;top:0}
+
+/* pyramid */
+.pyr{display:flex;flex-direction:column;align-items:center;gap:7px}
+.layer{border:3px solid var(--ink);border-radius:14px;padding:8px 10px;font-weight:800;text-align:center;box-shadow:4px 4px 0 var(--ink);background:var(--c);
+  transition:transform .15s}
+.layer:hover{transform:translateY(-3px)}
+.layer.on{outline:4px solid var(--ink);outline-offset:3px}
+
+/* mail */
+.mrow{display:flex;gap:10px;border-bottom:2px solid var(--ink);padding:6px 0;font-size:15px}
+.mrow span{opacity:.55;min-width:62px}
+.mbody{font-family:inherit;white-space:pre-wrap;padding-top:12px;font-size:15.5px}
+
+/* table */
+.cmp{width:100%;border-collapse:separate;border-spacing:0 8px}
+.cmp td{padding:10px 14px;background:#fff;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);font-weight:600;font-size:15.5px}
+.cmp td:first-child{border-left:3px solid var(--ink);border-radius:14px 0 0 14px;background:var(--yellow);font-weight:800;width:26%}
+.cmp td:last-child{border-right:3px solid var(--ink);border-radius:0 14px 14px 0}
+
+/* game + quiz */
+.gq{font-size:clamp(19px,2.3vw,26px);font-weight:800;min-height:110px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:10px 16px;font-weight:600;margin-bottom:10px;
+  box-shadow:3px 3px 0 var(--ink);transition:transform .12s}
+.opt:hover:not(:disabled){transform:translate(-2px,-2px)}
+.opt.right{background:var(--mint)}.opt.wrong{background:var(--pink)}
+.opt:disabled{cursor:default}
+.fb{font-weight:700;min-height:28px;margin-top:6px}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--ink);background:#fff}
+.dots i.y{background:var(--mint)}.dots i.n{background:var(--pink)}
+
+/* sticky notes */
+.sticky{padding:16px 16px 20px;border:3px solid var(--ink);box-shadow:5px 6px 0 var(--ink);border-radius:6px 6px 22px 6px;background:var(--c);transform:rotate(var(--r));
+  font-weight:600;font-size:16px;line-height:1.3;transition:transform .2s}
+.sticky:hover{transform:rotate(0) scale(1.04)}
+.sticky b{display:block;font-family:'Caveat',cursive;font-size:26px;line-height:1;margin-bottom:4px}
+details{border:3px solid var(--ink);border-radius:14px;background:#fff;padding:8px 14px;margin-bottom:10px;box-shadow:3px 3px 0 var(--ink)}
+summary{font-weight:800;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'➕';font-size:15px}
+details[open] summary::before{content:'➖'}
+details p{margin-top:6px;font-size:15.5px}
+details em{background:var(--yellow);font-style:normal;padding:0 4px;border-radius:4px}
+
+@media (max-width:860px){
+  .g3{grid-template-columns:repeat(2,1fr)}
+  .split2{grid-template-columns:1fr}
+  .team{grid-template-columns:repeat(2,1fr)}
+  .hint{display:none}
+  .inner{padding-top:22px}
+}
+@media (max-width:540px){.g2,.g3{grid-template-columns:1fr}.flip,.tally{height:160px}.sticker{--s:40px!important}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<main id="deck">
+
+<!-- 0 TITLE -->
+<section class="slide" style="--bg:var(--yellow)">
+  <div class="inner"><div class="c">
+    <h1 class="big split">Write it right.</h1>
+    <p class="lead">Formal communication, from meeting minutes to memos, without the yawns. A Communication Skills session.</p>
+    <div class="card" style="max-width:760px">
+      <p class="note" style="margin-bottom:8px">Our team (tap a name to type yours) ✏️</p>
+      <div class="team">
+        <span class="member" contenteditable="true" spellcheck="false" data-name="1">Member 1</span>
+        <span class="member" contenteditable="true" spellcheck="false" data-name="2">Member 2</span>
+        <span class="member" contenteditable="true" spellcheck="false" data-name="3">Member 3</span>
+        <span class="member" contenteditable="true" spellcheck="false" data-name="4">Member 4</span>
+        <span class="member" contenteditable="true" spellcheck="false" data-name="5">Member 5</span>
+        <span class="member" contenteditable="true" spellcheck="false" data-name="6">Member 6</span>
+      </div>
+    </div>
+    <div><button class="btn go-next" style="font-size:20px;padding:12px 28px">Let's go 🚀</button></div>
+  </div></div>
+  <span class="sticker floaty" style="right:7%;top:10%;--s:90px;--r:12deg">✉️</span>
+  <span class="sticker floaty" style="right:20%;bottom:16%;--s:76px;--r:-10deg;animation-delay:-1.5s">📣</span>
+  <span class="sticker" style="right:5%;bottom:30%;--s:64px;--r:8deg">📎</span>
+  <span class="sticker" style="right:30%;top:7%;--s:56px;--r:-14deg">⭐</span>
+  <span class="sticker" style="left:46%;bottom:10%;--s:60px;--r:6deg">📝</span>
+</section>
+
+<!-- 1 ROADMAP -->
+<section class="slide" style="--bg:var(--sky)">
+  <div class="inner"><div class="c">
+    <div class="hd"><h2>Today's roadmap</h2><span class="by">tap a card to jump</span></div>
+    <div class="grid g3">
+      <button class="road" style="--c:var(--yellow)" data-go="2"><span class="em">🎩</span><h3>The rules of the game</h3><p>Formal communication, the 7 Cs, writing conventions</p><span class="who">🎤 <span data-name="1">Member 1</span></span></button>
+      <button class="road" style="--c:var(--pink)" data-go="5"><span class="em">📅</span><h3>Meetings</h3><p>Agendas and minutes</p><span class="who">🎤 <span data-name="2">Member 2</span></span></button>
+      <button class="road" style="--c:var(--mint)" data-go="7"><span class="em">💌</span><h3>Letters and applications</h3><p>Formal letters, job and leave applications</p><span class="who">🎤 <span data-name="3">Member 3</span></span></button>
+      <button class="road" style="--c:var(--lilac)" data-go="9"><span class="em">📌</span><h3>Notices and memos</h3><p>Who gets told what, and how</p><span class="who">🎤 <span data-name="4">Member 4</span></span></button>
+      <button class="road" style="--c:var(--orange)" data-go="10"><span class="em">📰</span><h3>Press releases and emails</h3><p>Make the news, then send it</p><span class="who">🎤 <span data-name="5">Member 5</span></span></button>
+      <button class="road" style="--c:#fff" data-go="12"><span class="em">🔧</span><h3>Technical and academic writing</h3><p>Know your reader, cite your sources</p><span class="who">🎤 <span data-name="6">Member 6</span></span></button>
+    </div>
+    <p class="note">Bonus: a quiz at the end. Winners get bragging rights. 🏆</p>
+  </div></div>
+  <span class="sticker" style="right:3%;top:5%;--s:60px;--r:10deg">🧭</span>
+  <span class="sticker" style="left:2%;bottom:14%;--s:54px;--r:-12deg">🗺️</span>
+</section>
+
+<!-- 2 FORMAL COMM -->
+<section class="slide" style="--bg:var(--yellow)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 1</span><h2>Communication with a dress code</h2><span class="by">by <b data-name="1">Member 1</b></span></div>
+    <div class="split2">
+      <div class="card">
+        <h3 style="font-size:24px;margin-bottom:8px">What is formal communication?</h3>
+        <p style="font-weight:600">Messages that follow official channels, a set structure and a professional tone. Everyone knows who said what, to whom, and why. Best part: it leaves a record, so "I never got told" stops working.</p>
+        <p class="note" style="margin-top:12px">Think of it as texting your friend vs. emailing the principal. 🎓</p>
+      </div>
+      <div>
+        <p style="font-weight:800;margin-bottom:10px">Which way does the message travel? Tap one 👇</p>
+        <div class="tabs tabgroup" id="flow" style="margin-bottom:14px">
+          <button class="btn on" data-f="0">⬇️ Downward</button>
+          <button class="btn" data-f="1">⬆️ Upward</button>
+          <button class="btn" data-f="2">↔️ Horizontal</button>
+        </div>
+        <div class="bubble" id="flowbox">Boss to team. Think notices, circulars, instructions and policy updates.</div>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:4%;top:6%;--s:70px;--r:10deg">🎩</span>
+  <span class="sticker" style="left:3%;bottom:12%;--s:56px;--r:-10deg">🏛️</span>
+</section>
+
+<!-- 3 SEVEN Cs -->
+<section class="slide" style="--bg:var(--pink)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 1</span><h2>The 7 Cs of good writing</h2><span class="by">flip all 7!</span></div>
+    <div class="grid" id="cs" style="grid-template-columns:repeat(4,1fr)"></div>
+  </div></div>
+  <span class="sticker" style="right:2%;top:4%;--s:58px;--r:12deg">🔄</span>
+</section>
+
+<!-- 4 CONVENTIONS -->
+<section class="slide" style="--bg:var(--mint)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 1</span><h2>Professional writing conventions</h2><span class="by">by <b data-name="1">Member 1</b></span></div>
+    <div class="split2">
+      <div>
+        <div class="tabs" id="fz" style="margin-bottom:14px">
+          <button class="btn on" data-m="c">Casual 😎</button>
+          <button class="btn" data-m="p">Professional 🧑‍💼</button>
+        </div>
+        <div class="grid" id="fzlist"></div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:22px;margin-bottom:8px">Your pre-send checklist</h3>
+        <div id="chklist"></div>
+        <p class="note" id="chkmsg" style="margin-top:8px">Tick them all, I dare you.</p>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker" style="right:3%;top:5%;--s:60px;--r:-8deg">✅</span>
+  <span class="sticker" style="left:1%;bottom:12%;--s:54px;--r:10deg">🧐</span>
+</section>
+
+<!-- 5 MEETINGS -->
+<section class="slide" style="--bg:var(--sky)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 2</span><h2>Meetings: before and after</h2><span class="by">by <b data-name="2">Member 2</b></span></div>
+    <div class="tabgroup">
+      <div class="tabs" style="margin-bottom:16px">
+        <button class="btn on" data-tab="ag">📋 Agenda (before)</button>
+        <button class="btn" data-tab="mi">📝 Minutes (after)</button>
+      </div>
+      <div class="split2">
+        <div>
+          <div class="panel paper" data-panel="ag">
+            <h4>AGENDA: Project check-in</h4>
+            <p style="text-align:center;font-size:13.5px">Fri, 10 Nov 2026, 3:00 pm, Room 204<br>Chair: Member 1. Secretary: Member 2</p>
+            <p><b>1.</b> Welcome and apologies (3 min)<br><b>2.</b> Minutes of last meeting (5 min)<br><b>3.</b> Presentation progress (15 min)<br><b>4.</b> Task allocation (10 min)<br><b>5.</b> Any Other Business (5 min)<br><b>6.</b> Date of next meeting</p>
+          </div>
+          <div class="panel paper" data-panel="mi" hidden>
+            <h4>MINUTES: Project check-in</h4>
+            <p style="text-align:center;font-size:13.5px">Held Fri, 10 Nov 2026, 3:00 pm, Room 204<br>Present: all six. Apologies: none</p>
+            <p><b>Item 3.</b> The team reported slides were 70% complete. <i>It was decided</i> that design would be finished by Wednesday.</p>
+            <p><b>Action:</b> Member 3 to finish visuals. <b>Deadline:</b> Wed, 15 Nov.</p>
+            <p>Meeting closed at 3:35 pm. Next meeting: 17 Nov.</p>
+          </div>
+        </div>
+        <div>
+          <div class="panel" data-panel="ag">
+            <ul class="clean">
+              <li data-i="📨">Send it 2 to 3 days <b>before</b> the meeting</li>
+              <li data-i="⏱️">Give every item a time slot and a lead person</li>
+              <li data-i="🎯">Put the most important items first</li>
+              <li data-i="🔚">Finish with "Any Other Business" and the next date</li>
+            </ul>
+            <p class="note" style="margin-top:14px">No agenda = a 2-hour chat about snacks. 🍕</p>
+          </div>
+          <div class="panel" data-panel="mi" hidden>
+            <ul class="clean">
+              <li data-i="⚡">Send within 24 to 48 hours</li>
+              <li data-i="⏪">Use past tense and neutral language</li>
+              <li data-i="✂️">Record decisions and actions, not every word</li>
+              <li data-i="👤">Every action needs an owner and a deadline</li>
+              <li data-i="👍">Approved at the next meeting</li>
+            </ul>
+            <p class="note" style="margin-top:14px">If it's not in the minutes, it didn't happen. 😉</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:64px;--r:10deg">🗓️</span>
+  <span class="sticker" style="left:1%;bottom:10%;--s:56px;--r:-10deg">☕</span>
+</section>
+
+<!-- 6 GAME -->
+<section class="slide" style="--bg:var(--lilac)">
+  <div class="inner"><div class="c" style="max-width:760px">
+    <div class="hd"><span class="part">Part 2</span><h2>Agenda or minutes?</h2><span class="by">quick game</span></div>
+    <div class="card" style="text-align:center">
+      <div class="gq" id="gq"></div>
+      <div class="tabs" id="gbtns" style="justify-content:center;margin-top:10px">
+        <button class="btn" data-a="Agenda">📋 Agenda</button>
+        <button class="btn" data-a="Minutes">📝 Minutes</button>
+      </div>
+      <div class="fb" id="gfb"></div>
+      <div class="dots" id="gdots"></div>
+    </div>
+  </div></div>
+  <span class="sticker" style="right:4%;top:8%;--s:60px;--r:12deg">🎮</span>
+  <span class="sticker" style="left:3%;bottom:12%;--s:56px;--r:-8deg">🤔</span>
+</section>
+
+<!-- 7 LETTER -->
+<section class="slide" style="--bg:var(--mint)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 3</span><h2>Anatomy of a formal letter</h2><span class="by">by <b data-name="3">Member 3</b></span></div>
+    <div class="split2">
+      <div class="paper" id="letter"></div>
+      <div>
+        <div class="card" id="lpanel" style="margin-bottom:14px"></div>
+        <p style="font-weight:800;margin-bottom:6px">Letter types you'll meet</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip">Enquiry</span><span class="chip">Order</span><span class="chip">Complaint</span><span class="chip">Adjustment</span><span class="chip">Sales</span><span class="chip">Recommendation</span></div>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:62px;--r:10deg">💌</span>
+</section>
+
+<!-- 8 APPLICATIONS -->
+<section class="slide" style="--bg:var(--orange)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 3</span><h2>Applications that get a yes</h2><span class="by">by <b data-name="3">Member 3</b></span></div>
+    <div class="tabgroup">
+      <div class="tabs" style="margin-bottom:16px">
+        <button class="btn on" data-tab="job">💼 Job application</button>
+        <button class="btn" data-tab="leave">🏖️ Leave application</button>
+      </div>
+      <div class="split2">
+        <div>
+          <div class="panel" data-panel="job">
+            <details open><summary>Hook</summary><p>Name the role and where you found it. <em>"I am writing to apply for the Content Intern role listed on your careers page."</em></p></details>
+            <details><summary>Fit</summary><p>Match two skills to what they need. <em>"I write for our college magazine and manage its social media."</em></p></details>
+            <details><summary>Proof</summary><p>One real achievement, with a number. <em>"My article series grew readership by 40%."</em></p></details>
+            <details><summary>Ask</summary><p>Request the next step and say thanks. <em>"I would welcome the chance to discuss my application."</em></p></details>
+          </div>
+          <div class="panel" data-panel="leave" hidden>
+            <details open><summary>Request</summary><p>Say what you want upfront. <em>"I request leave for two days, 12 and 13 November 2026."</em></p></details>
+            <details><summary>Reason</summary><p>Short and honest. <em>"I need to attend a family wedding out of town."</em></p></details>
+            <details><summary>Cover</summary><p>Show responsibility. <em>"I will complete my pending assignment before leaving."</em></p></details>
+            <details><summary>Thanks</summary><p><em>"Thank you for considering my request."</em></p></details>
+          </div>
+        </div>
+        <div class="grid" style="gap:14px">
+          <div class="card good"><b>Do ✅</b><br>Address the person by title. Keep it to one page. Attach your résumé or proof. Check every name and date.</div>
+          <div class="card bad"><b>Don't ❌</b><br>Over-explain. Beg. Use slang. Send the same copy-pasted letter to every company.</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker" style="right:3%;top:5%;--s:60px;--r:10deg">🤞</span>
+  <span class="sticker" style="left:1%;bottom:12%;--s:54px;--r:-10deg">📄</span>
+</section>
+
+<!-- 9 NOTICE VS MEMO -->
+<section class="slide" style="--bg:var(--lilac)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 4</span><h2>Notice vs memo</h2><span class="by">by <b data-name="4">Member 4</b></span></div>
+    <div class="tabgroup">
+      <div class="tabs" style="margin-bottom:16px">
+        <button class="btn on" data-tab="no">📌 Notice</button>
+        <button class="btn" data-tab="me">📨 Memorandum</button>
+      </div>
+      <div class="split2">
+        <div>
+          <div class="panel paper" data-panel="no">
+            <h4>GREENFIELD COLLEGE</h4>
+            <h4 style="margin:6px 0">NOTICE</h4>
+            <p style="text-align:right;font-size:13.5px">4 November 2026</p>
+            <p style="text-align:center"><b>Tech Fest: Volunteers Wanted</b></p>
+            <p>Students who wish to volunteer for the Tech Fest on 20 November may register at the Student Council office by 12 November. Seats are limited to 40, first come, first served.</p>
+            <p style="text-align:right"><b>Riya Verma</b><br>Secretary, Student Council</p>
+          </div>
+          <div class="panel paper" data-panel="me" hidden>
+            <h4>MEMORANDUM</h4>
+            <p style="margin-top:8px"><b>To:</b> All Team Leads<br><b>From:</b> Anil Kulkarni, HR Manager<br><b>Date:</b> 4 November 2026<br><b>Subject:</b> Revised Friday working hours</p>
+            <hr style="border:1.5px solid var(--ink);margin-bottom:10px">
+            <p>From 10 November, Friday office hours will be 9 am to 4 pm. Please inform your teams by Monday and send any concerns to HR by 8 November.</p>
+            <p>AK</p>
+          </div>
+        </div>
+        <div>
+          <div class="panel" data-panel="no">
+            <ul class="clean">
+              <li data-i="👥">For <b>many people</b>, often the public</li>
+              <li data-i="📍">Lives on a notice board, website or intranet</li>
+              <li data-i="🧱">Issuer, "NOTICE", date, heading, body, signature and designation</li>
+              <li data-i="⚡">Short. Readers pass by in seconds</li>
+            </ul>
+          </div>
+          <div class="panel" data-panel="me" hidden>
+            <ul class="clean">
+              <li data-i="🏢">For specific people <b>inside</b> one organisation</li>
+              <li data-i="🧾">To, From, Date, Subject, then straight to the point</li>
+              <li data-i="🚫">No "Dear..." and no "Yours sincerely"</li>
+              <li data-i="✍️">Initials instead of a full signature</li>
+            </ul>
+          </div>
+          <p class="tip" style="margin-top:14px">Memory trick: a <b>notice</b> is a billboard, a <b>memo</b> is a note passed across the office.</p>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:62px;--r:10deg">📌</span>
+</section>
+
+<!-- 10 PRESS RELEASE -->
+<section class="slide" style="--bg:var(--yellow)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 5</span><h2>Press releases: lead with the news</h2><span class="by">by <b data-name="5">Member 5</b></span></div>
+    <div class="split2" style="align-items:center">
+      <div>
+        <p class="note" style="text-align:center">Most important ⬇ tap a layer</p>
+        <div class="pyr" id="pyr"></div>
+        <p class="note" style="text-align:center;margin-top:6px">Least important ⬆ the editor can cut from the bottom</p>
+      </div>
+      <div class="card" id="ppanel"></div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:64px;--r:10deg">📰</span>
+  <span class="sticker" style="left:1%;bottom:12%;--s:54px;--r:-10deg">🎙️</span>
+</section>
+
+<!-- 11 EMAIL -->
+<section class="slide" style="--bg:var(--pink)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 5</span><h2>Email makeover</h2><span class="by">by <b data-name="5">Member 5</b></span></div>
+    <div class="tabgroup">
+      <div class="tabs" style="margin-bottom:16px">
+        <button class="btn on" data-tab="b">Before 😬</button>
+        <button class="btn" data-tab="a" data-boom="1">After ✨</button>
+      </div>
+      <div class="split2">
+        <div class="card">
+          <div class="panel" data-panel="b">
+            <div class="mrow"><span>To</span><b>prof.sharma@college.example</b></div>
+            <div class="mrow"><span>Subject</span><b>hi</b></div>
+            <div class="mbody">hey sir pls check attachment n tell me if its ok. need it fast thx</div>
+          </div>
+          <div class="panel" data-panel="a" hidden>
+            <div class="mrow"><span>To</span><b>prof.sharma@college.example</b></div>
+            <div class="mrow"><span>Subject</span><b>Request for feedback: CS presentation outline (due Fri 10 Nov)</b></div>
+            <div class="mbody">Dear Prof. Sharma,
+
+I hope you are well. I have attached the outline for our Communication Skills presentation. Could you please share your feedback by Thursday so our team can revise it before Friday?
+
+Thank you for your time.
+
+Regards,
+Riya Verma
+CS Section B</div>
+          </div>
+        </div>
+        <div>
+          <div class="panel" data-panel="b">
+            <ul class="clean">
+              <li data-i="😬">Vague subject: nobody knows what "hi" is about</li>
+              <li data-i="😬">No greeting, no name, no sign-off</li>
+              <li data-i="😬">Text-speak and a demand, not a request</li>
+              <li data-i="😬">Says "attachment" but forgot to attach it</li>
+            </ul>
+          </div>
+          <div class="panel" data-panel="a" hidden>
+            <ul class="clean">
+              <li data-i="✅">Subject says what, and by when</li>
+              <li data-i="✅">Polite greeting and sign-off</li>
+              <li data-i="✅">One clear ask with a deadline</li>
+              <li data-i="✅">Attachment actually attached</li>
+            </ul>
+          </div>
+          <p class="tip" style="margin-top:14px">Before you hit send: check <b>To</b>, <b>Cc</b> and <b>Reply All</b>. Use <b>Bcc</b> to protect people's addresses.</p>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:62px;--r:10deg">📧</span>
+  <span class="sticker" style="left:1%;bottom:12%;--s:54px;--r:-10deg">🚀</span>
+</section>
+
+<!-- 12 TECH COMM -->
+<section class="slide" style="--bg:var(--sky)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 6</span><h2>Technical communication</h2><span class="by">by <b data-name="6">Member 6</b></span></div>
+    <div class="split2">
+      <div class="card">
+        <p style="font-weight:600">Explaining complex or specialised information so a <b>specific reader</b> can understand it and act on it.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><span class="chip">User manuals</span><span class="chip">Reports</span><span class="chip">Proposals</span><span class="chip">Instructions</span><span class="chip">FAQs</span><span class="chip">Data sheets</span></div>
+        <p class="note">Audience-focused, accurate, clear, and visual where it helps. 📊</p>
+      </div>
+      <div class="tabgroup">
+        <p style="font-weight:800;margin-bottom:8px">"What does a Wi-Fi router do?" Pick your reader:</p>
+        <div class="tabs" style="margin-bottom:12px">
+          <button class="btn on" data-tab="k">🧒 A 10-year-old</button>
+          <button class="btn" data-tab="m">👔 A manager</button>
+          <button class="btn" data-tab="e">🧑‍💻 An engineer</button>
+        </div>
+        <div class="bubble panel" data-panel="k">It's like a post office at home. It picks up letters from the internet and hands them to your phone and laptop.</div>
+        <div class="bubble panel" data-panel="m" hidden>It connects all our devices to the internet. A better one means fewer dropped calls and less downtime for the team.</div>
+        <div class="bubble panel" data-panel="e" hidden>It routes packets between WAN and LAN, assigns addresses through DHCP, performs NAT and serves as an 802.11 access point.</div>
+        <p class="note" style="margin-top:10px">Same fact, three versions. Your reader decides the words.</p>
+      </div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:62px;--r:10deg">🔧</span>
+  <span class="sticker" style="left:1%;bottom:12%;--s:54px;--r:-10deg">📡</span>
+</section>
+
+<!-- 13 ACADEMIC VS PRO -->
+<section class="slide" style="--bg:var(--mint)">
+  <div class="inner"><div class="c">
+    <div class="hd"><span class="part">Part 6</span><h2>Academic vs professional writing</h2><span class="by">by <b data-name="6">Member 6</b></span></div>
+    <div class="tabgroup">
+      <div class="tabs" style="margin-bottom:8px">
+        <button class="btn on" data-tab="ac">🎓 Academic</button>
+        <button class="btn" data-tab="pr">💼 Professional</button>
+      </div>
+      <div class="panel" data-panel="ac"><table class="cmp">
+        <tr><td>Goal</td><td>Show understanding and argue a point</td></tr>
+        <tr><td>Reader</td><td>Teachers, examiners, researchers</td></tr>
+        <tr><td>Structure</td><td>Introduction, body, conclusion (and an abstract for papers)</td></tr>
+        <tr><td>Evidence</td><td>Cited sources in APA, MLA or IEEE</td></tr>
+        <tr><td>Style</td><td>Formal, objective, longer paragraphs</td></tr></table></div>
+      <div class="panel" data-panel="pr" hidden><table class="cmp">
+        <tr><td>Goal</td><td>Get something decided or done</td></tr>
+        <tr><td>Reader</td><td>Busy colleagues, clients, managers</td></tr>
+        <tr><td>Structure</td><td>Bottom line first, then headings and bullets</td></tr>
+        <tr><td>Evidence</td><td>Data, facts and references where needed</td></tr>
+        <tr><td>Style</td><td>Short, direct, action-oriented</td></tr></table></div>
+      <p class="tip">Both need: clarity, accuracy and honesty. And never plagiarise: if it's not your idea, cite it. 🙅</p>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:3%;top:5%;--s:62px;--r:10deg">🎓</span>
+  <span class="sticker" style="left:1%;bottom:12%;--s:54px;--r:-10deg">📚</span>
+</section>
+
+<!-- 14 QUIZ -->
+<section class="slide" style="--bg:var(--yellow)">
+  <div class="inner"><div class="c" style="max-width:760px">
+    <div class="hd"><h2>Quiz time!</h2><span class="by" id="qprog">Q1 of 5</span></div>
+    <div class="card">
+      <p class="gq" style="min-height:70px;justify-content:flex-start;text-align:left" id="qq"></p>
+      <div id="qo"></div>
+      <div class="fb" id="qfb"></div>
+      <div style="margin-top:10px"><button class="btn" id="qnext" hidden>Next ➡️</button></div>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:4%;top:6%;--s:64px;--r:10deg">🏆</span>
+  <span class="sticker" style="left:2%;bottom:12%;--s:54px;--r:-10deg">🧠</span>
+</section>
+
+<!-- 15 THANKS -->
+<section class="slide" style="--bg:var(--pink)">
+  <div class="inner"><div class="c">
+    <h2 class="big split" style="font-size:clamp(48px,9vw,120px)">Thank you!</h2>
+    <p class="lead">Six takeaways, one for each of us:</p>
+    <div class="grid g3">
+      <div class="sticky" style="--c:var(--yellow);--r:-2deg"><b>Be the 7 Cs</b>Clear, concise, concrete, correct, coherent, complete, courteous.</div>
+      <div class="sticky" style="--c:var(--sky);--r:1.5deg"><b>Meetings</b>Agenda before, minutes after. Actions need owners.</div>
+      <div class="sticky" style="--c:var(--mint);--r:-1deg"><b>Letters</b>Right layout, right sign-off. Ask clearly.</div>
+      <div class="sticky" style="--c:var(--lilac);--r:2deg"><b>Notices and memos</b>Notice for many, memo for your own office.</div>
+      <div class="sticky" style="--c:var(--orange);--r:-2deg"><b>News and email</b>Lead with the news. Make the subject line count.</div>
+      <div class="sticky" style="--c:#fff;--r:1deg"><b>Know your reader</b>Match the words to the audience. Cite your sources.</div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <button class="btn" id="party" style="font-size:20px;padding:12px 28px">🎉 Celebrate</button>
+      <span class="note" style="font-size:30px">Questions? Ask away!</span>
+    </div>
+  </div></div>
+  <span class="sticker floaty" style="right:5%;top:6%;--s:84px;--r:12deg">🎉</span>
+  <span class="sticker" style="right:20%;bottom:14%;--s:60px;--r:-10deg">🙌</span>
+</section>
+
+</main>
+
+<div id="nav">
+  <button id="home" title="Roadmap" aria-label="Roadmap">🏠</button>
+  <button id="prev" aria-label="Previous slide">◀</button>
+  <span id="count">1 / 16</span>
+  <button id="next" aria-label="Next slide">▶</button>
+  <button id="fs" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+</div>
+<div class="hint">arrow keys work too · drag the stickers!</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const COLORS=['#FFD84D','#FF7AA8','#6EE0AE','#74C0FF','#B7A1FF','#FF9A52'];
+const boom=(x=.5,y=.6,n=90)=>{ if(typeof confetti==='function') confetti({particleCount:n,spread:75,origin:{x,y},colors:COLORS,ticks:160}); };
+
+/* ---------- deck navigation ---------- */
+const slides=$$('.slide'); let cur=-1;
+function show(i,dir){
+  i=Math.max(0,Math.min(slides.length-1,i)); if(i===cur) return;
+  const back = dir==='back' || (dir===undefined && i<cur);
+  slides.forEach(s=>s.classList.remove('active','back'));
+  slides[i].classList.add('active'); slides[i].classList.toggle('back',back);
+  slides[i].querySelector('.inner').scrollTop=0;
+  cur=i; location.hash=i+1;
+  $('#bar').style.width=((i+1)/slides.length*100)+'%';
+  $('#count').textContent=(i+1)+' / '+slides.length;
+  $('#prev').disabled=i===0; $('#next').disabled=i===slides.length-1;
+}
+const next=()=>show(cur+1,'fwd'), prev=()=>show(cur-1,'back');
+$('#next').onclick=next; $('#prev').onclick=prev; $('#home').onclick=()=>show(1);
+$('#fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
+$$('.go-next').forEach(b=>b.onclick=next);
+$$('[data-go]').forEach(b=>b.onclick=()=>show(+b.dataset.go,'fwd'));
+document.addEventListener('keydown',e=>{
+  if(e.target.isContentEditable){ if(e.key==='Enter'){e.preventDefault();e.target.blur();} return; }
+  if(['ArrowRight','PageDown'].includes(e.key)) next();
+  else if(['ArrowLeft','PageUp'].includes(e.key)) prev();
+  else if(e.key==='Home') show(0,'back'); else if(e.key==='End') show(slides.length-1,'fwd');
+  else if(e.key.toLowerCase()==='f') $('#fs').click();
+});
+let tx=null;
+document.addEventListener('touchstart',e=>{tx=e.target.closest('.sticker,.flip,details,input,[contenteditable]')?null:e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{ if(tx===null) return; const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>70) d<0?next():prev(); tx=null; });
+
+/* ---------- team names sync ---------- */
+$$('.member').forEach(m=>m.addEventListener('input',()=>{
+  const v=m.textContent.trim()||('Member '+m.dataset.name);
+  $$('[data-name="'+m.dataset.name+'"]').forEach(el=>{ if(el!==m) el.textContent=v; });
+}));
+
+/* ---------- jumpy headline letters ---------- */
+$$('.split').forEach(h=>{
+  h.setAttribute('aria-label',h.textContent);
+  h.innerHTML=h.textContent.split(' ').map(w=>'<span class="w" aria-hidden="true">'+[...w].map(c=>'<span class="ch">'+c+'</span>').join('')+'</span>').join(' ');
+});
+
+/* ---------- draggable stickers ---------- */
+$$('.sticker').forEach(s=>{
+  let sx,sy,ox,oy,moved=false;
+  s.addEventListener('pointerdown',e=>{
+    s.setPointerCapture(e.pointerId); moved=false; sx=e.clientX; sy=e.clientY;
+    const r=s.getBoundingClientRect(), p=s.offsetParent.getBoundingClientRect(); ox=r.left-p.left; oy=r.top-p.top;
+    s.classList.add('grab'); s.style.animation='none';
+  });
+  s.addEventListener('pointermove',e=>{
+    if(!s.hasPointerCapture(e.pointerId)) return;
+    const dx=e.clientX-sx, dy=e.clientY-sy; if(Math.abs(dx)+Math.abs(dy)>4) moved=true;
+    s.style.left=(ox+dx)+'px'; s.style.top=(oy+dy)+'px'; s.style.right='auto'; s.style.bottom='auto';
+  });
+  s.addEventListener('pointerup',e=>{
+    s.classList.remove('grab');
+    if(!moved){ s.classList.remove('wig'); void s.offsetWidth; s.classList.add('wig'); const r=s.getBoundingClientRect(); boom((r.left+r.width/2)/innerWidth,(r.top+r.height/2)/innerHeight,35); }
+  });
+});
+
+/* ---------- generic tabs ---------- */
+$$('.tabgroup').forEach(g=>{
+  g.addEventListener('click',e=>{
+    const b=e.target.closest('[data-tab]'); if(!b||!g.contains(b)) return;
+    $$('[data-tab]',g).forEach(x=>x.classList.toggle('on',x===b));
+    $$('.panel',g).forEach(p=>{ const show=p.dataset.panel===b.dataset.tab; p.hidden=!show; if(show){p.classList.remove('pop');void p.offsetWidth;p.classList.add('pop');} });
+    if(b.dataset.boom) boom(.5,.5,70);
+  });
+});
+
+/* ---------- slide 2: flow ---------- */
+const FLOW=['Boss to team. Think notices, circulars, instructions and policy updates.','Team to boss. Think reports, applications, feedback and requests for approval.','Peer to peer, across departments. Think memos, coordination emails and shared schedules.'];
+$('#flow').addEventListener('click',e=>{
+  const b=e.target.closest('[data-f]'); if(!b) return;
+  $$('#flow .btn').forEach(x=>x.classList.toggle('on',x===b));
+  const box=$('#flowbox'); box.textContent=FLOW[b.dataset.f]; box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
+});
+
+/* ---------- slide 3: 7 Cs ---------- */
+const CS=[
+ ['🔍','Clear','One idea per sentence. Say "by Friday 5 pm", not "soon".','var(--yellow)'],
+ ['✂️','Concise','Cut the filler. "Due to the fact that" becomes "because".','var(--sky)'],
+ ['🧱','Concrete','Use facts and figures. "Sales rose 12%", not "did well".','var(--mint)'],
+ ['✔️','Correct','Check grammar, spelling, names and facts. Proofread twice.','var(--lilac)'],
+ ['🔗','Coherent','Ideas flow in order. Use connectors and short paragraphs.','var(--orange)'],
+ ['📦','Complete','Who, what, when, where, why and what happens next.','var(--yellow)'],
+ ['🤝','Courteous','Be respectful. Say please and thank you. Think "you", not "me".','var(--sky)']];
+const csBox=$('#cs'); let flipped=0;
+CS.forEach(([em,t,d,c])=>{
+  const el=document.createElement('button'); el.className='flip'; el.style.setProperty('--c',c);
+  el.innerHTML='<div class="fi"><div class="face"><span class="em">'+em+'</span><b>'+t+'</b></div><div class="face back"><b>'+t+'</b>'+d+'</div></div>';
+  el.onclick=()=>{ const on=el.classList.toggle('on'); flipped+=on?1:-1; $('#tcount').textContent=flipped+'/7';
+    if(flipped===7){ $('#tmsg').textContent='Seven for seven! 🎉'; boom(.5,.6,140);} else $('#tmsg').textContent='cards flipped'; };
+  csBox.appendChild(el);
+});
+csBox.insertAdjacentHTML('beforeend','<div class="tally"><b id="tcount">0/7</b><span id="tmsg" style="font-weight:600">cards flipped</span></div>');
+csBox.style.gridTemplateColumns='repeat(auto-fit,minmax(150px,1fr))';
+
+/* ---------- slide 4: formalizer + checklist ---------- */
+const FZ=[
+ ['Hey guys, gonna be late, traffic\'s insane!!','Dear team, I will be about 15 minutes late due to heavy traffic. I apologise for the inconvenience.','🚗'],
+ ['Send me the report ASAP!!','Could you please send me the report by 4 pm today? Thank you.','📊'],
+ ['Your idea is kinda dumb.','I see a few challenges with this approach. Could we explore an alternative?','💡']];
+const fzl=$('#fzlist');
+FZ.forEach(([c,p,e])=>{ const d=document.createElement('div'); d.className='card fzc'; d.dataset.c=c; d.dataset.p=p; d.innerHTML='<span class="face-e">'+e+'</span><span>'+c+'</span>'; fzl.appendChild(d); });
+$('#fz').addEventListener('click',e=>{
+  const b=e.target.closest('[data-m]'); if(!b) return;
+  $$('#fz .btn').forEach(x=>x.classList.toggle('on',x===b));
+  $$('.fzc').forEach(d=>{ d.lastElementChild.textContent=b.dataset.m==='p'?d.dataset.p:d.dataset.c; d.classList.toggle('pro',b.dataset.m==='p'); d.classList.remove('pop'); void d.offsetWidth; d.classList.add('pop'); });
+  if(b.dataset.m==='p') boom(.3,.5,40);
+});
+const CHK=['Active voice: "We approved the plan", not "The plan was approved by us"','No slang, emojis or text-speak','Full forms, not contractions (do not, cannot)','Short paragraphs, one idea each','Right greeting and right sign-off','Proofread before you send'];
+CHK.forEach(t=>{ const l=document.createElement('label'); l.className='chk'; l.innerHTML='<input type="checkbox"><span>'+t+'</span>'; $('#chklist').appendChild(l); });
+$('#chklist').addEventListener('change',()=>{ const n=$$('#chklist input:checked').length;
+  $('#chkmsg').textContent=n===CHK.length?'Perfect. Hit send! 🚀':n+' of '+CHK.length+' done';
+  if(n===CHK.length) boom(.75,.6,100); });
+
+/* ---------- slide 6: game ---------- */
+const GM=[
+ ['Sent before the meeting to say what will be discussed','Agenda'],
+ ['Written in past tense: "It was decided that..."','Minutes'],
+ ['Lists items with time slots','Agenda'],
+ ['Records who must do what, and by when','Minutes'],
+ ['Ends with "Any Other Business"','Agenda'],
+ ['Gets approved at the next meeting','Minutes']];
+let gi=0,gs=0; const gd=$('#gdots');
+GM.forEach(()=>gd.appendChild(document.createElement('i')));
+function gshow(){ $('#gq').textContent=gi<GM.length?GM[gi][0]:(gs>=5?'🏆 '+gs+'/'+GM.length+'. Meeting legend!':gs+'/'+GM.length+'. Good effort, play again!');
+  $('#gbtns').hidden=gi>=GM.length; if(gi>=GM.length){ $('#gfb').innerHTML='<button class="btn" id="gre">Play again 🔁</button>'; $('#gre').onclick=()=>{gi=0;gs=0;$$('#gdots i').forEach(i=>i.className='');$('#gfb').textContent='';gshow();}; if(gs>=5) boom(.5,.5,130);} }
+$('#gbtns').addEventListener('click',e=>{ const b=e.target.closest('[data-a]'); if(!b||gi>=GM.length) return;
+  const ok=b.dataset.a===GM[gi][1]; if(ok) gs++; $$('#gdots i')[gi].className=ok?'y':'n';
+  $('#gfb').textContent=ok?'Correct! ✅':'Nope, that one is '+GM[gi][1]+' ❌'; gi++; setTimeout(()=>{ if(gi<GM.length) $('#gfb').textContent=''; gshow(); },gi<GM.length?900:700); });
+gshow();
+
+/* ---------- slide 7: letter anatomy ---------- */
+const LP=[
+ ['Letterhead','Sender\'s name, address and contact details at the top.','Tip: company letters use a printed letterhead.','GreenLeaf Traders<br>14 Park Road, Pune 411001<br>hello@greenleaf.example'],
+ ['Date','The day you write the letter. Write the month in words.','Example: 4 November 2026. It avoids 04/11 vs 11/04 confusion.','4 November 2026'],
+ ['Inside address','Who you are writing to: title, organisation, address.','Use a name if you can find one. It beats "To whom it may concern".','The Manager<br>Sunrise Stationers<br>22 Market Street, Mumbai 400001'],
+ ['Salutation','The greeting. Match it to what you know about the reader.','Dear Sir/Madam if no name. Dear Ms Rao if you have one.','Dear Sir/Madam,'],
+ ['Subject line','One short line that says what the letter is about.','Readers decide how to file it in two seconds.','<b>Subject: Enquiry about bulk order of notebooks</b>'],
+ ['Body','Three moves: say why you write, give the details, say what you want next.','Short paragraphs. One idea each.','We wish to buy 500 A5 notebooks. Could you please share your price list, discounts and delivery time? We would like to place the order by 20 November.'],
+ ['Complimentary close','The polite sign-off. It has to match the salutation.','Dear Sir/Madam → Yours faithfully. Dear Ms Rao → Yours sincerely.','Yours faithfully,'],
+ ['Signature block','Space to sign, then your typed name and designation.','Sign by hand in the gap for printed letters.','Aarav Mehta<br>Purchase Executive'],
+ ['Enclosures','A line listing anything attached.','Write "Encl." and list each item.','Encl.: Product specification sheet']];
+const L=$('#letter'), LPN=$('#lpanel');
+LP.forEach((p,i)=>{ const b=document.createElement('button'); b.className='hot'; b.innerHTML=p[3]; b.onclick=()=>lsel(i); L.appendChild(b); });
+function lsel(i){ $$('.hot').forEach((h,j)=>h.classList.toggle('on',i===j)); const p=LP[i];
+  LPN.innerHTML='<h3 style="font-size:24px;margin-bottom:6px">'+p[0]+'</h3><p style="font-weight:600">'+p[1]+'</p><p class="note" style="margin-top:8px">'+p[2]+'</p>'; LPN.classList.remove('pop'); void LPN.offsetWidth; LPN.classList.add('pop'); }
+LPN.innerHTML='<h3 style="font-size:24px;margin-bottom:6px">Tap any part of the letter 👈</h3><p style="font-weight:600">We\'ll tell you what goes there and the common mistakes.</p>';
+
+/* ---------- slide 10: press release pyramid ---------- */
+const PR=[
+ ['Headline','Short, strong, present tense.','Campus Green Club plants 1,000 trees in one weekend','100%','var(--pink)'],
+ ['Dateline and lead','Answer who, what, when, where, why in 1 to 2 sentences.','PUNE, 4 November 2026: The Campus Green Club planted 1,000 saplings on Saturday with the help of 300 student volunteers.','84%','var(--sky)'],
+ ['Key details and quote','Add the facts and a human voice.','"We wanted students to leave something living behind," said club president Nisha Rao.','68%','var(--mint)'],
+ ['Background','Context that is nice to know.','The club began in 2022 and has now planted over 3,500 trees on and around campus.','52%','var(--lilac)'],
+ ['About and contact','Who you are, and how journalists reach you. End with ###.','About Campus Green Club: a student group for the environment. Media contact: press@greenclub.example. ###','36%','var(--orange)']];
+const PY=$('#pyr'), PP=$('#ppanel');
+PR.forEach((p,i)=>{ const b=document.createElement('button'); b.className='layer'; b.style.width=p[3]; b.style.setProperty('--c',p[4]); b.textContent=p[0]; b.onclick=()=>psel(i); PY.appendChild(b); });
+function psel(i){ $$('.layer').forEach((l,j)=>l.classList.toggle('on',i===j)); const p=PR[i];
+  PP.innerHTML='<p class="note">FOR IMMEDIATE RELEASE 📣</p><h3 style="font-size:24px;margin:4px 0">'+p[0]+'</h3><p class="sm" style="font-weight:600;margin-bottom:10px">'+p[1]+'</p><div class="paper" style="box-shadow:none;background-image:none">'+p[2]+'</div>'; PP.classList.remove('pop'); void PP.offsetWidth; PP.classList.add('pop'); }
+psel(0);
+
+/* ---------- slide 14: quiz ---------- */
+const QZ=[
+ ['A letter starts with "Dear Sir/Madam". How should it end?',['Yours sincerely','Yours faithfully','Cheers','Best of luck'],1,'Unknown name means "Yours faithfully". Known name means "Yours sincerely".'],
+ ['Which document records decisions in the past tense?',['Agenda','Notice','Minutes','Press release'],2,'Minutes record what was discussed, decided and who will act.'],
+ ['A memo is mainly used for...',['Messages inside one organisation','Announcing news to journalists','Applying for a job','Writing to customers abroad'],0,'Memos are internal. No "Dear" and no "Yours sincerely".'],
+ ['In a press release, the most important facts go...',['At the end','In the middle','In a footnote','At the start'],3,'It is the inverted pyramid. Editors cut from the bottom.'],
+ ['Best subject line for a leave email?',['Hi','URGENT!!!','Leave request: 12 to 13 Nov (Riya Sharma)','Please read'],2,'Specific, polite and tells the reader what to do.']];
+let qi=0,qs=0;
+function qshow(){
+  $('#qprog').textContent='Q'+(qi+1)+' of '+QZ.length; const [q,o,a,e]=QZ[qi]; $('#qq').textContent=q;
+  const box=$('#qo'); box.innerHTML=''; $('#qfb').textContent=''; $('#qnext').hidden=true;
+  o.forEach((t,i)=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=t;
+    b.onclick=()=>{ $$('.opt',box).forEach((x,j)=>{x.disabled=true; if(j===a) x.classList.add('right');});
+      if(i===a){ qs++; $('#qfb').textContent='Yes! '+e; boom(.5,.5,45);} else { b.classList.add('wrong'); $('#qfb').textContent='Not quite. '+e; }
+      $('#qnext').hidden=false; $('#qnext').textContent=qi===QZ.length-1?'See my score 🏁':'Next ➡️'; };
+    box.appendChild(b); });
+}
+$('#qnext').onclick=()=>{ qi++; if(qi<QZ.length) qshow(); else {
+  $('#qprog').textContent='Done!'; $('#qq').textContent='You scored '+qs+' out of '+QZ.length+(qs===5?' 🏆 Perfect!':qs>=3?' 👏 Nicely done!':' 📚 Revise and retry!');
+  $('#qo').innerHTML='<button class="btn" id="qre">Try again 🔁</button>'; $('#qfb').textContent=''; $('#qnext').hidden=true;
+  $('#qre').onclick=()=>{qi=0;qs=0;qshow();}; if(qs>=3) boom(.5,.5,160); } };
+qshow();
+
+/* ---------- finale ---------- */
+$('#party').onclick=()=>{ boom(.2,.7,120); boom(.8,.7,120); setTimeout(()=>boom(.5,.4,160),250); };
+
+show(Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1))||1)-1)),'fwd');
+</script>
+</body>
+</html>
